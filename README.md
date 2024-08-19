@@ -1,7 +1,7 @@
 <div align="center">
 <img alt="logo" height="120" src="./public/favicon.png" width="120"/>
 <h2>今日热榜</h2>
-<p>汇聚全网热点，热门尽览无余</p>
+<p>掌握全球热点，定制你的专属资讯源</p>
 <br />
 <img src="./screenshots/main.jpg" style="border-radius: 16px" />
 </div>
@@ -11,9 +11,11 @@
 
 > 这里是示例站点
 
-- [今日热榜 - https://hot.imsyy.top/](https://hot.imsyy.top/)
+- [今日热榜 - http://hotnews.nice-stuff.rocks/#/](http://hotnews.nice-stuff.rocks/#/)
 
+## 更新
 
+在原有基础上增加时间线功能，并且增加RSS订阅功能
 ## 部署
 
 ```bash
@@ -27,10 +29,4 @@ pnpm dev
 pnpm build
 ```
 
-## Vercel 部署
 
-现已支持 npm 一键部署，无需服务器
-
-> 请注意，需要修改环境变量中的 API 地址
-
-![Powered by Vercel](./public/ico/powered-by-vercel.svg)
