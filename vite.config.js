@@ -42,7 +42,7 @@ export default defineConfig(({ mode }) => {
             },
             {
               urlPattern:
-                /(.*?)\.(webp|png|jpe?g|svg|gif|bmp|psd|tiff|tga|eps)/,
+                /(.*?)\.(webp|png|jpe?g|svg|gif|bmp|psd|tiff|tga|eps|ico)/,
               handler: "CacheFirst",
               options: {
                 cacheName: "image-cache",
@@ -74,7 +74,14 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      port: 6699,
+      port: 6688,
+      proxy: {
+        '/api': {
+          target: 'http://localhost:8080', // 你的后端服务器地址
+          changeOrigin: true, // 如果你的 API 服务器运行在不同的端口或域中，这将更改请求头中的 `origin`。
+          rewrite: (path) => path.replace(/^\/api/, ''), // 可选：重写路径，如果你的 API 路径和后端路径不匹配
+        },
+      },
     },
     build: {
       minify: "terser",

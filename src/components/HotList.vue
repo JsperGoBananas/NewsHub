@@ -1,46 +1,23 @@
 <template>
-  <n-card
-    :header-style="{ padding: '16px' }"
-    :content-style="{ padding: '0 16px' }"
-    :footer-style="{ padding: '16px' }"
-    :id="`hot-list-${hotData.name}`"
-    class="hot-list"
-    hoverable
-    @click="toList"
-  >
+  <n-card :header-style="{ padding: '16px' }" :content-style="{ padding: '0 16px' }" :footer-style="{ padding: '16px' }"
+    :id="`hot-list-${hotData.id}`" class="hot-list" hoverable @click="toList">
     <template #header>
       <n-space class="title" justify="space-between">
         <div class="name">
-          <n-avatar
-            class="ico"
-            :src="`/logo/${hotData.name}.png`"
-            fallback-src="/ico/icon_error.png"
-          />
-          <n-text class="name-text">{{ hotData.label }}</n-text>
+          <n-avatar class="ico" :src="`/logo/${hotData.id}.ico`" :fallback-src="`${hotData.iconUrl}`" />
+          <n-text class="name-text">{{ hotData.title }}</n-text>
         </div>
-        <n-text v-if="hotListData?.type" class="subtitle" :depth="2">
-          {{ hotListData.type }}
+        <n-text v-if="hotListData?.category" class="subtitle" :depth="2">
+          {{ hotListData.category }}
         </n-text>
-        <n-skeleton v-else width="60px" text round />
+        <!-- <n-skeleton v-else width="60px" text round /> -->
       </n-space>
     </template>
     <n-scrollbar class="news-list" ref="scrollbarRef">
       <Transition name="fade" mode="out-in">
         <div v-if="loadingError" class="error">
-          <n-result
-            size="small"
-            status="500"
-            title="哎呀，加载失败了"
-            description="生活总会遇到不如意的事情"
-            style="margin-top: 40px"
-          />
-          <n-button
-            size="small"
-            secondary
-            strong
-            round
-            @click.stop="getHotListsData(hotData.name)"
-          >
+          <n-result size="small" status="500" title="哎呀，加载失败了" description="生活总会遇到不如意的事情" style="margin-top: 40px" />
+          <n-button size="small" secondary strong round @click.stop="getHotListsData(hotData.source)">
             <template #icon>
               <n-icon :component="Refresh" />
             </template>
@@ -50,31 +27,17 @@
         <div v-else-if="!hotListData || listLoading" class="loading">
           <n-skeleton text round :repeat="10" height="20px" />
         </div>
-        <div v-else class="lists" :id="hotData.name + 'Lists'">
-          <div
-            class="item"
-            v-for="(item, index) in hotListData.data.slice(0, 15)"
-            :key="item"
-          >
-            <n-text
-              class="num"
-              :class="
-                index === 0
-                  ? 'one'
-                  : index === 1
-                  ? 'two'
-                  : index === 2
+        <div v-else class="lists" :id="hotData.source + 'Lists'">
+          <div class="item" v-for="(item, index) in hotListData.data.slice(0, 15)" :key="item">
+            <n-text class="num" :class="index === 0
+              ? 'one'
+              : index === 1
+                ? 'two'
+                : index === 2
                   ? 'three'
                   : null
-              "
-              :depth="2"
-              >{{ index + 1 }}</n-text
-            >
-            <n-text
-              :style="{ fontSize: store.listFontSize + 'px' }"
-              class="text"
-              @click.stop="jumpLink(item)"
-            >
+              " :depth="2">{{ index + 1 }}</n-text>
+            <n-text :style="{ fontSize: store.listFontSize + 'px' }" class="text" @click.stop="navigate(item)">
               {{ item.title }}
             </n-text>
           </div>
@@ -95,15 +58,19 @@
             </n-text>
             <n-text class="time" :depth="3" v-else> 获取失败 </n-text>
             <n-space class="controls">
+              <n-popover>
+                <template #trigger>
+                  <n-button size="tiny" secondary strong round @click.stop="handleCancel(hotData)">
+                    <template #icon>
+                      <n-icon :component="CloseOne" />
+                    </template>
+                  </n-button>
+                </template>
+                取消订阅
+              </n-popover>
               <n-popover v-if="hotListData.data.length > 15">
                 <template #trigger>
-                  <n-button
-                    size="tiny"
-                    secondary
-                    strong
-                    round
-                    @click.stop="toList"
-                  >
+                  <n-button size="tiny" secondary strong round @click.stop="toList">
                     <template #icon>
                       <n-icon :component="More" />
                     </template>
@@ -113,13 +80,7 @@
               </n-popover>
               <n-popover>
                 <template #trigger>
-                  <n-button
-                    size="tiny"
-                    secondary
-                    strong
-                    round
-                    @click.stop="getNewData"
-                  >
+                  <n-button size="tiny" secondary strong round @click.stop="getNewData">
                     <template #icon>
                       <n-icon :component="Refresh" />
                     </template>
@@ -136,14 +97,18 @@
 </template>
 
 <script setup>
-import { Refresh, More } from "@icon-park/vue-next";
+import { Refresh, More, CloseOne } from "@icon-park/vue-next";
 import { getHotLists } from "@/api";
 import { formatTime } from "@/utils/getTime";
 import { mainStore } from "@/store";
 import { useRouter } from "vue-router";
+import { useDialog, useMessage } from 'naive-ui'
+import axios from "@/api/request";
 
+const dialog = useDialog()
 const router = useRouter();
 const store = mainStore();
+console.log(`新闻列表 ${store.newsArr}`)
 const props = defineProps({
   // 热榜数据
   hotData: {
@@ -157,7 +122,7 @@ const updateTime = ref(null);
 
 // 刷新按钮数据
 const lastClickTime = ref(
-  localStorage.getItem(`${props.hotData.name}Btn`) || 0
+  localStorage.getItem(`${props.hotData.id}Btn`) || 0
 );
 
 // 热榜数据
@@ -167,16 +132,18 @@ const listLoading = ref(false);
 const loadingError = ref(false);
 
 // 获取热榜数据
-const getHotListsData = async (name, isNew = false) => {
+const getHotListsData = async (name) => {
   try {
     // hotListData.value = null;
     loadingError.value = false;
-    const item = store.newsArr.find((item) => item.name == name);
-    const result = await getHotLists(item.name, isNew, item.params);
+    const item = store.newsArr.find((item) => item.id == name);
+    console.log(item)
+    const result = await getHotLists(item.id, item.params);
     // console.log(result);
     if (result.code === 200) {
       listLoading.value = false;
-      hotListData.value = result;
+      hotListData.value = result.data;
+      //.data
       // 滚动至顶部
       if (scrollbarRef.value) {
         scrollbarRef.value.scrollTo({ position: "top", behavior: "smooth" });
@@ -195,36 +162,86 @@ const getHotListsData = async (name, isNew = false) => {
 const getNewData = () => {
   const now = Date.now();
   if (now - lastClickTime.value > 60000) {
+    $message.loading("正在更新，请稍后");
     // 点击事件
-    listLoading.value = true;
-    getHotListsData(props.hotData.name, true);
+    // listLoading.value = true;
+    axios.post("/hotlist/update", null, {
+      params: {
+        id: props.hotData.id,
+      }
+    }).then((res) => {
+      console.log(res);
+      if (res.code === 200) {
+        $message.success(res.data);
+      } else {
+        $message.error(res.data);
+      }
+      getHotListsData(props.hotData.id);
+      // 更新最后一次点击时间
+      lastClickTime.value = now;
+      localStorage.setItem(`${props.hotData.id}Btn`, now);
+
+    });
+    // getHotListsData(props.hotData.id, true);
     // 更新最后一次点击时间
     lastClickTime.value = now;
-    localStorage.setItem(`${props.hotData.name}Btn`, now);
+    localStorage.setItem(`${props.hotData.id}Btn`, now);
   } else {
     // 不执行点击事件
     $message.info("请稍后再刷新");
   }
 };
 
+const handleCancel = () => {
+
+  dialog.warning({
+    title: '提示',
+    content: '取消订阅' + props.hotData.title + '?',
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      console.log(props.hotData.id);
+      axios
+      .post("/website/remove",null, {
+        params:{
+          id: props.hotData.id
+        }
+      }).then(res => {
+        console.log(res.data);
+        if (res.code === 200) {
+          store.newsArr = store.newsArr.filter(item => item.id !== props.hotData.id)
+          $message.success('取消订阅成功')
+        } else {
+          $message.error('取消订阅失败')
+        }
+
+      })
+    },
+    onNegativeClick: () => {
+
+    }
+  })
+}
 // 链接跳转
-const jumpLink = (data) => {
-  if (!data.url || !data.mobileUrl) return $message.error("链接不存在");
-  const url = window.innerWidth > 680 ? data.url : data.mobileUrl;
+const navigate = (data) => {
+  console.log(data);
+  if (!data.link && !data.homepage) return $message.error("链接不存在");
+  const url = data.link == null ? data.homepage : data.link;
   if (store.linkOpenType === "open") {
     window.open(url, "_blank");
   } else if (store.linkOpenType === "href") {
     window.location.href = url;
   }
-};
+}
 
 // 前往全部列表
 const toList = () => {
-  if (props.hotData.name) {
+  if (props.hotData.id) {
     router.push({
       path: "/list",
       query: {
-        type: props.hotData.name,
+        type: props.hotData.id,
+        category: props.hotData.category,
       },
     });
   } else {
@@ -234,14 +251,14 @@ const toList = () => {
 
 // 判断列表是否显示
 const checkListShow = () => {
-  const typeName = props.hotData.name;
+  const typeName = props.hotData.id;
   const listId = "hot-list-" + typeName;
   const listDom = document.getElementById(listId);
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         console.log(`👀 ${typeName} 可见，开始加载`);
-        getHotListsData(props.hotData.name);
+        getHotListsData(props.hotData.id);
         observer.unobserve(entry.target);
       }
     });
@@ -269,14 +286,17 @@ onMounted(() => {
   border-radius: 12px;
   transition: all 0.3s;
   cursor: pointer;
+
   .title {
     display: flex;
     align-items: center;
     font-size: 16px;
     height: 26px;
+
     .name {
       display: flex;
       align-items: center;
+
       .n-avatar {
         background-color: transparent;
         width: 20px;
@@ -314,6 +334,7 @@ onMounted(() => {
       display: flex;
       flex-direction: column;
       align-items: center;
+
       .n-button {
         margin-top: 12px;
       }
@@ -362,7 +383,7 @@ onMounted(() => {
         }
 
         &.one {
-          background-color: #ea444d;
+          background-color: #f44336;
           color: #fff;
         }
 
@@ -395,7 +416,7 @@ onMounted(() => {
 
         @media (max-width: 768px) {
           &:active {
-            color: #ea444d;
+            color: #f44336;
           }
         }
 

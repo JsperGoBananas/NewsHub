@@ -3,7 +3,7 @@
     <n-layout
       embedded
       :native-scrollbar="false"
-      :class="store.headerFixed ? 'fixed' : null"
+      
     >
       <n-back-top :visibility-height="2" @update:show="backTopChange" />
       <Header :class="headerShow ? 'show' : null" />
@@ -26,7 +26,7 @@ import { mainStore } from "@/store";
 import Provider from "@/components/Provider.vue";
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
-
+import axios from "@/api/request"
 const store = mainStore();
 
 // 顶栏显隐
@@ -42,7 +42,16 @@ onMounted(() => {
   // 写入默认
   nextTick(() => {
     if (store.newsArr.length === 0) {
-      store.newsArr = store.defaultNewsArr;
+      //请求http://localhost:8080/website/list获取数据
+      // 写入默认数据
+      
+      axios.get('/website/list').then(res => {
+        // console.log(res.data);
+        store.newsArr = res.data;
+        
+      });
+      console.log(store.newsArr)
+      // store.newsArr = store.defaultNewsArr;
     }
   });
 });

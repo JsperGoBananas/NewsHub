@@ -5,6 +5,13 @@
       <n-text
         class="author"
         :depth="3"
+        v-html="packageJson.modifier"
+        @click="jumpLink(packageJson.github)"
+      />
+      <n-text class="credit" v-html="packageJson.credit" />
+      <n-text
+        class="author"
+        :depth="3"
         v-html="packageJson.author"
         @click="jumpLink(packageJson.github)"
       />
@@ -45,6 +52,12 @@ footer {
     .description {
       &::after {
         content: "@ Copyright By";
+        margin: 0 6px;
+      }
+    }
+    .credit {
+      &::after {
+        content: "@ Credit To";
         margin: 0 6px;
       }
     }

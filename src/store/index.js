@@ -1,171 +1,231 @@
+import axios from "axios";
 import { defineStore } from "pinia";
 
 export const mainStore = defineStore("mainData", {
   state: () => {
     return {
       // 系统主题
-      siteTheme: "light",
+      siteTheme: "dark",
       siteThemeAuto: true,
       // 新闻类别
       defaultNewsArr: [
-        {
-          label: "哔哩哔哩",
-          name: "bilibili",
-          order: 0,
-          show: true,
-        },
-        {
-          label: "微博",
-          name: "weibo",
-          order: 1,
-          show: true,
-        },
-        {
-          label: "抖音",
-          name: "douyin",
-          order: 2,
-          show: true,
-        },
-        {
-          label: "知乎",
-          name: "zhihu",
-          order: 3,
-          show: true,
-        },
-        {
-          label: "36氪",
-          name: "36kr",
-          order: 4,
-          show: true,
-        },
-        {
-          label: "百度",
-          name: "baidu",
-          order: 5,
-          show: true,
-        },
-        {
-          label: "少数派",
-          name: "sspai",
-          order: 6,
-          show: true,
-        },
-        {
-          label: "IT之家",
-          name: "ithome",
-          order: 7,
-          show: true,
-        },
-        {
-          label: "澎湃新闻",
-          name: "thepaper",
-          order: 8,
-          show: true,
-        },
-        {
-          label: "今日头条",
-          name: "toutiao",
-          order: 9,
-          show: true,
-        },
-        {
-          label: "百度贴吧",
-          name: "tieba",
-          order: 10,
-          show: true,
-        },
-        {
-          label: "稀土掘金",
-          name: "juejin",
-          order: 11,
-          show: true,
-        },
-        {
-          label: "腾讯新闻",
-          name: "qq-news",
-          order: 12,
-          show: true,
-        },
-        {
-          label: "豆瓣电影",
-          name: "douban-movie",
-          order: 13,
-          show: true,
-        },
-        {
-          label: "原神",
-          name: "genshin",
-          order: 14,
-          show: true,
-        },
-        {
-          label: "崩坏：星穹铁道",
-          name: "starrail",
-          order: 16,
-          show: true,
-        },
-        {
-          label: "LOL",
-          name: "lol",
-          order: 15,
-          show: true,
-        },
-        {
-          label: "网易新闻",
-          name: "netease-news",
-          order: 17,
-          show: true,
-        },
-        {
-          label: "微信读书",
-          name: "weread",
-          order: 18,
-          show: true,
-        },
-        {
-          label: "豆瓣讨论小组",
-          name: "douban-group",
-          order: 19,
-          show: true,
-        },
-        {
-          label: "NGA",
-          name: "ngabbs",
-          order: 20,
-          show: true,
-        },
-        {
-          label: "HelloGitHub",
-          name: "hellogithub",
-          order: 21,
-          show: true,
-        },
-        {
-          label: "简书",
-          name: "jianshu",
-          order: 22,
-          show: true,
-        },
-        {
-          label: "知乎日报",
-          name: "zhihu-daily",
-          order: 23,
-          show: true,
-        },
+        // {
+        //   label: "哔哩哔哩",
+        //   name: "bilibili",
+        //   order: 0,
+        //   show: false,
+        // },
+        // {
+        //   label: "微博",
+        //   name: "weibo",
+        //   order: 1,
+        //   show: false,
+        // },
+        // {
+        //   label: "抖音",
+        //   name: "douyin",
+        //   order: 2,
+        //   show: false,
+        // },
+        // {
+        //   label: "知乎",
+        //   name: "zhihu",
+        //   category: "default",
+        //   order: 3,
+        //   show: true,
+        // },
+        // {
+        //   label: "36氪",
+        //   name: "36kr",
+        //   category: "default",
+        //   order: 4,
+        //   show: true,
+        // },
+        // {
+        //   label: "百度",
+        //   name: "baidu",
+        //   order: 5,
+        //   show: false,
+        // },
+        // {
+        //   label: "少数派",
+        //   name: "sspai",
+        //   category: "default",
+        //   order: 6,
+        //   show: true,
+        // },
+        // {
+        //   label: "IT之家",
+        //   name: "ithome",
+        //   order: 7,
+        //   show: false,
+        // },
+        // {
+        //   label: "澎湃新闻",
+        //   name: "thepaper",
+        //   order: 8,
+        //   show: false,
+        // },
+        // {
+        //   label: "今日头条",
+        //   name: "toutiao",
+        //   order: 9,
+        //   show: false,
+        // },
+        // {
+        //   label: "百度贴吧",
+        //   name: "tieba",
+        //   order: 10,
+        //   show: false,
+        // },
+        // {
+        //   label: "稀土掘金",
+        //   name: "juejin",
+        //   order: 11,
+        //   show: false,
+        // },
+        // {
+        //   label: "腾讯新闻",
+        //   name: "qq-news",
+        //   order: 12,
+        //   show: false,
+        // },
+        // {
+        //   label: "豆瓣电影",
+        //   name: "douban-movie",
+        //   order: 13,
+        //   show: false,
+        // },
+        // {
+        //   label: "原神",
+        //   name: "genshin",
+        //   order: 14,
+        //   show: false,
+        // },
+        // {
+        //   label: "崩坏：星穹铁道",
+        //   name: "starrail",
+        //   order: 16,
+        //   show: false,
+        // },
+        // {
+        //   label: "LOL",
+        //   name: "lol",
+        //   order: 15,
+        //   show: false,
+        // },
+        // {
+        //   label: "网易新闻",
+        //   name: "netease-news",
+        //   order: 17,
+        //   show: false,
+        // },
+        // {
+        //   label: "微信读书",
+        //   name: "weread",
+        //   order: 18,
+        //   show: false,
+        // },
+        // {
+        //   label: "豆瓣讨论小组",
+        //   name: "douban-group",
+        //   order: 19,
+        //   show: false,
+        // },
+        // {
+        //   label: "NGA",
+        //   name: "ngabbs",
+        //   order: 20,
+        //   show: false,
+        // },
+        // {
+        //   label: "HelloGitHub",
+        //   name: "hellogithub",
+        //   order: 21,
+        //   show: false,
+        // },
+        // {
+        //   label: "简书",
+        //   name: "jianshu",
+        //   order: 22,
+        //   show: false,
+        // },
+        // {
+        //   label: "知乎日报",
+        //   name: "zhihu_daily",
+        //   category: "default",
+        //   order: 23,
+        //   show: true,
+        // },
+        // {
+        //   label: "BBC",
+        //   name: "bbc_news",
+        //   category:"default",
+        //   order: 24,
+        //   show: true,
+        // },
+        // {
+        //   label: "The New York Times",
+        //   name: "ny_times",
+        //   category: "default",
+        //   order: 25,
+        //   show: true,
+        // },
+        // {
+        //   label: "GitHub",
+        //   name: "github",
+        //   category: "default",
+        //   order: 26,
+        //   show: true,
+        // },
+        // {
+        //   label: "WikiPedia",
+        //   name: "wikipedia_history",
+        //   category: "en",
+        //   order: 27,
+        //   show: true,
+        // },
+        // {
+        //   label: "维基百科",
+        //   name: "wikipedia_most_read",
+        //   category: "zh",
+        //   order: 28,
+        //   show: true,
+        // },
+        // {
+        //   label: "WikiPedia",
+        //   name: "wikipedia_most_read",
+        //   category: "en",
+        //   order: 28,
+        //   show: true,
+        // },
+        // {
+        //   label: "央视新闻",
+        //   name: "cctv_news",
+        //   category: "default",
+        //   order: 29,
+        //   show: true,
+        // },
       ],
       newsArr: [],
       // 链接跳转方式
-      linkOpenType: "open",
+      linkOpenType: "href",
       // 页头固定
-      headerFixed: true,
+      headerFixed: false,
       // 时间数据
       timeData: null,
       // 字体大小
       listFontSize: 16,
+      mode: "list",
     };
   },
   getters: {},
   actions: {
+    //切换分页显示和时间线显示
+    setMode(val){
+      $message.info(`已切换至${val === "list" ? "分页显示" : "时间线显示"}`);
+      this.mode = val;
+    },
     // 更改系统主题
     setSiteTheme(val) {
       $message.info(`已切换至${val === "dark" ? "深色模式" : "浅色模式"}`, {
@@ -176,27 +236,35 @@ export const mainStore = defineStore("mainData", {
     },
     // 检查更新
     checkNewsUpdate() {
-      const mainData = JSON.parse(localStorage.getItem("mainData"));
-      let updatedNum = 0;
-      if (!mainData) return false;
-      console.log("列表尝试更新", this.defaultNewsArr, this.newsArr);
-      // 执行比较并迁移
-      if (this.newsArr.length > 0) {
-        for (const newItem of this.defaultNewsArr) {
-          const exists = this.newsArr.some(
-            (news) => newItem.label === news.label && newItem.name === news.name
-          );
-          if (!exists) {
-            console.log("列表有更新：", newItem);
-            updatedNum++;
-            this.newsArr.push(newItem);
+      axios.get('/website/list').then(res => {
+        console.log("asdf"+res.data);
+        const defaultNewsArr = res.data;
+        const mainData = JSON.parse(localStorage.getItem("mainData"));
+        let updatedNum = 0;
+        if (!mainData) return false;
+        console.log("列表尝试更新", defaultNewsArr, this.newsArr);
+        // 执行比较并迁移
+        if (this.newsArr.length > 0) {
+          for (const newItem of defaultNewsArr) {
+            console.log(newItem);
+            const exists = this.newsArr.some(
+              (news) => newItem.id === news.id
+            );
+            console.log(exists)
+            if (!exists) {
+              console.log("列表有更新：", newItem);
+              updatedNum++;
+              this.newsArr.push(newItem);
+            }
           }
+          if (updatedNum) $message.success(`成功更新 ${updatedNum} 个榜单数据`);
+        } else {
+          console.log("列表无内容，写入默认");
+          this.newsArr = defaultNewsArr;
         }
-        if (updatedNum) $message.success(`成功更新 ${updatedNum} 个榜单数据`);
-      } else {
-        console.log("列表无内容，写入默认");
-        this.newsArr = this.defaultNewsArr;
-      }
+      });
+      
+      
     },
   },
   persist: [

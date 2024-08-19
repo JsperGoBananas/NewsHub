@@ -1,7 +1,9 @@
 import LunarCalendar from "lunar-calendar";
 
 export const formatTime = (timestamp) => {
-  const date = new Date(timestamp);
+  // console.log(timestamp);
+  const date = new Date(timestamp+"Z");
+  // console.log(date);
   const now = new Date();
   const diffInSeconds = (now.getTime() - date.getTime()) / 1000;
   const diffInMinutes = diffInSeconds / 60;
@@ -11,10 +13,10 @@ export const formatTime = (timestamp) => {
     return "刚刚更新";
   } else if (diffInMinutes < 60) {
     const minutes = Math.floor(diffInMinutes);
-    return `${minutes}分钟前更新`;
+    return `最新记录: ${minutes}分钟前`;
   } else if (diffInHours < 24) {
     const hours = Math.floor(diffInHours);
-    return `${hours}小时前更新`;
+    return `最新记录: ${hours}小时前`;
   } else {
     const month = date.getMonth() + 1;
     const day = date.getDate();

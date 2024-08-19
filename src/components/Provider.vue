@@ -73,7 +73,7 @@ watch(
 // 配置主题色
 const themeOverrides = {
   common: {
-    primaryColor: "#ea444d",
+    primaryColor: "#f44336", 
     primaryColorHover: "#F57B74",
     primaryColorSuppl: "#F57B74",
     primaryColorPressed: "#F64B41",

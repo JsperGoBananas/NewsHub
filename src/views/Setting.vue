@@ -7,12 +7,7 @@
         <div class="name">
           <n-text class="text">明暗模式</n-text>
         </div>
-        <n-select
-          class="set"
-          v-model:value="siteTheme"
-          :options="themeOptions"
-          @update:value="siteThemeAuto = false"
-        />
+        <n-select class="set" v-model:value="siteTheme" :options="themeOptions" @update:value="siteThemeAuto = false" />
       </div>
     </n-card>
     <n-card class="set-item">
@@ -21,11 +16,7 @@
           <n-text class="text">明暗模式跟随系统</n-text>
           <n-text class="tip" :depth="3"> 明暗模式是否跟随系统当前模式 </n-text>
         </div>
-        <n-switch
-          v-model:value="siteThemeAuto"
-          :round="false"
-          @update:value="themeAutoOpen"
-        />
+        <n-switch v-model:value="siteThemeAuto" :round="false" @update:value="themeAutoOpen" />
       </div>
     </n-card>
     <n-card class="set-item">
@@ -34,14 +25,10 @@
           <n-text class="text">链接跳转方式</n-text>
           <n-text class="tip" :depth="3"> 选择榜单列表内容的跳转方式 </n-text>
         </div>
-        <n-select
-          class="set"
-          v-model:value="linkOpenType"
-          :options="linkOptions"
-        />
+        <n-select class="set" v-model:value="linkOpenType" :options="linkOptions" />
       </div>
     </n-card>
-    <n-card class="set-item">
+    <!-- <n-card class="set-item">
       <div class="top">
         <div class="name">
           <n-text class="text">固定导航栏</n-text>
@@ -49,76 +36,59 @@
         </div>
         <n-switch v-model:value="headerFixed" :round="false" />
       </div>
-    </n-card>
+    </n-card> -->
     <n-card class="set-item">
       <div class="top" style="flex-direction: column; align-items: flex-start">
         <div class="name">
           <n-text class="text">列表文本大小</n-text>
-          <n-card
-            class="tip"
-            :style="{
-              backgroundColor: 'var(--n-border-color)',
-              margin: '12px 0',
-            }"
-          >
+          <n-card class="tip" :style="{
+            backgroundColor: 'var(--n-border-color)',
+            margin: '12px 0',
+          }">
             <n-text :style="{ fontSize: listFontSize + 'px' }">
               我是将要显示的文字的大小
             </n-text>
           </n-card>
         </div>
 
-        <n-slider
-          v-model:value="listFontSize"
-          :tooltip="false"
-          :max="20"
-          :min="14"
-          :step="0.01"
-          :marks="{
-            14: '小一点',
-            16: '默认',
-            20: '最大',
-          }"
-        />
+        <n-slider v-model:value="listFontSize" :tooltip="false" :max="20" :min="14" :step="0.01" :marks="{
+          14: '小一点',
+          16: '默认',
+          20: '最大',
+        }" />
       </div>
     </n-card>
     <n-card class="set-item">
       <div class="top">
         <div class="name">
-          <n-text class="text">榜单排序</n-text>
-          <n-text class="tip" :depth="3">
-            拖拽以排序，开关用以控制在页面中的显示状态
-          </n-text>
+          <n-text class="text">榜单设置</n-text>
+          
         </div>
-        <n-popconfirm @positive-click="restoreDefault">
+        <n-card class="sort-control">
+            <n-switch v-model:value="isDraggable" :round="false"
+              @update:value= "tips" />
+            <n-text class="tip" :depth="3">
+              开启榜单排序
+            </n-text>
+          </n-card>
+        <!-- <n-popconfirm @positive-click="restoreDefault">
           <template #trigger>
             <n-button class="control" size="small"> 恢复默认 </n-button>
           </template>
-          确认将排序恢复到默认状态？
-        </n-popconfirm>
+确认将排序恢复到默认状态？
+</n-popconfirm> -->
       </div>
-      <draggable
-        :list="newsArr"
-        :animation="200"
-        class="mews-group"
-        item-key="order"
-        @end="saveSoreData()"
-      >
+      <draggable :list="newsArr" :animation="200" class="mews-group" item-key="order" @start="handleDragStart"
+        @end="saveSoreData()" :disabled="!isDraggable">
         <template #item="{ element }">
-          <n-card
-            class="item"
-            embedded
-            :content-style="{ display: 'flex', alignItems: 'center' }"
-          >
-            <div class="desc" :style="{ opacity: element.show ? null : 0.6 }">
-              <img class="logo" :src="`/logo/${element.name}.png`" alt="logo" />
-              <n-text class="news-name" v-html="element.label" />
+          <n-card class="item" embedded :content-style="{ display: 'flex', alignItems: 'center' }">
+            <div class="desc" :style="{ opacity: element.isShow ? null : 0.6 }">
+              <!-- <img class="logo" :src="`/logo/${element.id}.ico`" alt="logo" /> -->
+              <n-avatar class="logo" :src="`${element.iconUrl}`" :fallback-src="`/logo/${element.id}.ico`" />
+              <n-text class="news-name" v-html="element.title" />
             </div>
-            <n-switch
-              class="switch"
-              :round="false"
-              v-model:value="element.show"
-              @update:value="saveSoreData(element.label, element.show)"
-            />
+            <n-switch class="switch" :round="false" size="large" v-model:value="element.isShow"
+              @update:value="saveSoreData(element.title, element.isShow)" />
           </n-card>
         </template>
       </draggable>
@@ -151,6 +121,7 @@ import draggable from "vuedraggable";
 
 const store = mainStore();
 const osThemeRef = useOsTheme();
+const isDraggable = ref(false);
 const {
   siteTheme,
   siteThemeAuto,
@@ -160,6 +131,7 @@ const {
   listFontSize,
 } = storeToRefs(store);
 
+console.log(newsArr)
 // 深浅模式
 const themeOptions = ref([
   {
@@ -184,6 +156,13 @@ const linkOptions = [
   },
 ];
 
+const tips = () => {
+  if (isDraggable.value) {
+    $message.success("榜单排序已开启");
+  } else {
+    $message.error("榜单排序已关闭");
+  }
+};
 // 开启明暗自动跟随
 const themeAutoOpen = (val) => {
   console.log(osThemeRef.value);
@@ -203,6 +182,7 @@ const saveSoreData = (name = null, open = false) => {
   $message.success(
     name ? `${name}榜单已${open ? "开启" : "关闭"}` : "榜单排序成功"
   );
+  localStorage.setItem("mainData", JSON.stringify(newsArr.value));
 };
 
 // 重置数据
@@ -248,11 +228,21 @@ const reset = () => {
           border-radius: 8px;
         }
       }
+      .sort-control {
+        display: flex;
+        align-items: center;
+        flex-direction: column; /* 确保子项在一行显示 */
+        max-width: 200px; /* 设置最大宽度限制 */
+        flex-shrink: 0; /* 防止缩小 */
+        justify-content: flex-end; /* 右对齐 */
+      }
 
       .set {
         max-width: 200px;
       }
     }
+
+    
 
     .mews-group {
       margin-top: 16px;
@@ -286,6 +276,7 @@ const reset = () => {
           transition: all 0.3s;
 
           .logo {
+            background: transparent;
             width: 40px;
             height: 40px;
             margin-right: 12px;

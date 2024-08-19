@@ -4,14 +4,14 @@
       站点未完工
     </n-alert> -->
     <n-grid
-      v-if="store.newsArr[0] && store.newsArr.filter((item) => item.show)[0]"
+      v-if="store.newsArr[0] && store.newsArr.filter((item) => item.isShow)[0]"
       cols="1 560:2 800:3 1100:4 1500:5"
       :x-gap="24"
       :y-gap="24"
     >
       <n-grid-item
         class="news-card"
-        v-for="(item, index) in store.newsArr.filter((item) => item.show)"
+        v-for="(item, index) in store.newsArr.filter((item) => item.isShow)"
         :key="item"
         :style="{ animationDelay: index / 10 + 0.2 + 's' }"
       >
@@ -19,7 +19,7 @@
       </n-grid-item>
     </n-grid>
     <div class="error" v-else>
-      <n-divider dashed class="tip"> 此处暂无内容 </n-divider>
+      <n-divider dashed class="tip"> 开始添加你的第一个订阅吧！ </n-divider>
       <n-space justify="center">
         <n-button size="large" secondary strong @click="reset">
           出错了？点此重置
@@ -32,7 +32,7 @@
 <script setup>
 import { mainStore } from "@/store";
 import HotList from "@/components/HotList.vue";
-
+console.log("启动！")
 const store = mainStore();
 
 // 重置

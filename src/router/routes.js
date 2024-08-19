@@ -66,6 +66,22 @@ const routes = [
     path: "/:pathMatch(.*)",
     redirect: "/404",
   },
+  {
+    path: "/login",
+    name: "login",
+    meta: {
+      title: "登录页",
+    },
+    component: () => import("@/views/Login.vue"),
+  },
+  {
+    path:"/timeline",
+    name: "timeline",
+    meta: {
+      title: "timeline",
+    },
+    component: () => import("@/views/Timeline.vue"),
+  }
 ];
 
 export default routes;
