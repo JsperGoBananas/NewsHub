@@ -4,8 +4,8 @@
       <div class="logo" @click="router.push('/')">
         <img src="/ico/favicon.png" alt="logo" />
         <div class="name">
-          <n-text>今日热榜</n-text>
-          <n-text :depth="3">掌握全球热点，定制你的专属资讯源</n-text>
+          <n-text>{{ $t("header.title") }}</n-text>
+          <n-text :depth="3">{{ $t("header.desc") }}</n-text>
         </div>
       </div>
       <div class="current-time" v-if="store.timeData">
@@ -21,10 +21,20 @@
         </n-text>
       </div>
       <div class="current-time" v-else>
-        <n-text class="time">时间获取中</n-text>
+        <n-text class="time">{{ $t("header.loadingTime") }}</n-text>
       </div>
       <div class="controls">
         <n-space justify="end">
+          <n-popover>
+            <template #trigger>
+              <n-button secondary strong round @click="toggleLanguage()">
+                <template #icon>
+                  <n-icon :component="Translate" />
+                </template>
+              </n-button>
+            </template>
+            {{ $t("header.switchLanguage") }}
+          </n-popover>
           <n-popover>
             <template #trigger>
               <n-button secondary strong round @click="showModal = true">
@@ -33,7 +43,7 @@
                 </template>
               </n-button>
             </template>
-            添加链接
+            {{ $t("header.addUrl") }}
           </n-popover>
           <n-popover>
             <template #trigger>
@@ -43,7 +53,7 @@
                 </template>
               </n-button>
             </template>
-            切换页面
+            {{$t("header.switchMode")}}
           </n-popover>
           <n-popover v-if="showRefresh">
             <template #trigger>
@@ -53,13 +63,13 @@
                 </template>
               </n-button>
             </template>
-            刷新页面
+            {{ $t("header.refresh") }}
           </n-popover>
           <n-popover>
             <template #trigger>
               <n-button secondary strong round @click="
                 store.setSiteTheme(
-                  store.siteTheme === 'light' ? 'dark' : 'light'
+                  store.siteTheme === 'light' ? 'dark' : 'light',t
                 )
                 ">
                 <template #icon>
@@ -67,7 +77,7 @@
                 </template>
               </n-button>
             </template>
-            {{ store.siteTheme === "light" ? "深色模式" : "浅色模式" }}
+            {{ store.siteTheme === "light" ? $t('header.dark') : $t('header.light') }}
           </n-popover>
           <n-popover>
             <template #trigger>
@@ -77,7 +87,7 @@
                 </template>
               </n-button>
             </template>
-            全局设置
+            {{ $t("header.setting") }}
           </n-popover>
         </n-space>
       </div>
@@ -107,16 +117,16 @@
 
   </n-card>
   <n-modal v-model:show="showModal">
-      <n-card class="dialog" title="添加RSS订阅链接" :bordered="true">
-        <n-input v-model:value="urlInput" placeholder="请输入RSS链接" style="margin-bottom: 16px;">
+      <n-card class="dialog" :title="$t('header.rss.add')" :bordered="true">
+        <n-input v-model:value="urlInput" :placeholder="$t('header.rss.placeholder')" style="margin-bottom: 16px;">
 
         </n-input>
         <n-space>
           <n-button type="primary" @click="addLink">
-            添加
+            {{ $t("header.add") }}
           </n-button>
           <n-button @click="showModal = false">
-            取消
+            {{ $t("header.cancel") }}
           </n-button>
         </n-space>
       </n-card>
@@ -132,12 +142,15 @@ import {
   HamburgerButton,
   Add,
   Switch,
+  Translate,
 } from "@icon-park/vue-next";
 import { getCurrentTime } from "@/utils/getTime.js";
 import { mainStore } from "@/store";
 import { NText, NIcon } from "naive-ui";
 import { useRouter } from "vue-router";
 import axios from "@/api/request";
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n();
 const router = useRouter();
 const store = mainStore();
 const timeInterval = ref(null);
@@ -145,7 +158,10 @@ const showRefresh = ref(false);
 
 const showModal = ref(false); // State to show/hide the dialog
 const urlInput = ref(""); // State to hold the input value
-
+const { locale } = useI18n();
+const toggleLanguage = () =>{
+  locale.value = locale.value === 'en' ? 'zh' : 'en';
+}
 const addLink = () => {
   console.log(urlInput.value);
   if (urlInput.value.trim() !== "") {
@@ -157,7 +173,7 @@ const addLink = () => {
       .then((response) => {
         if (response.code == '200') {
           store.newsArr.push(response.data);
-          $message.success("新增订阅成功");
+          $message.success($t("header.rss.success"));
           
         } else {
           $message.error(response.message);
@@ -167,17 +183,17 @@ const addLink = () => {
 
       })
       .catch((error) => {
-        $message.error("Failed to add URL");
+        $message.error($t("header.rss.error"));
         console.error("Failed to add URL:", error);
       });
   }
 };
 function switchMode() {
   if (store.mode === "list") {
-    store.setMode("timeline")
+    store.setMode("timeline",t)
     return router.push("/timeline")
   } else {
-    store.setMode("list")
+    store.setMode("list",t)
     return router.push("/")
   }
 };
@@ -196,7 +212,7 @@ const timeRender = () => {
     [
       h(NText, null, {
         default: () =>
-          store.timeData ? store.timeData.time.text : "时间获取失败",
+          store.timeData ? store.timeData.time.text : t("header.error.time"),
       }),
       h(
         NText,
@@ -209,7 +225,7 @@ const timeRender = () => {
               store.timeData.lunar.text +
               " " +
               store.timeData.time.weekday
-              : "日期获取失败",
+              : t("header.error.date"),
         }
       ),
     ]
@@ -228,7 +244,7 @@ const menuOptions = [
     type: "divider",
   },
   {
-    label: "添加数据源",
+    label: t("header.addUrl"),
     key: "add",
     icon: () => {
       return h(NIcon, null, {
@@ -237,7 +253,7 @@ const menuOptions = [
     },
   },
   {
-    label: "切换模式",
+    label: t("header.switchMode"),
     key: "switch",
     icon: () => {
       return h(NIcon, null, {
@@ -246,7 +262,7 @@ const menuOptions = [
     },
   },
   {
-    label: "刷新页面",
+    label: t("header.refresh"),
     key: "refresh",
     icon: () => {
       return h(NIcon, null, {
@@ -258,7 +274,7 @@ const menuOptions = [
   {
     label: () => {
       return h(NText, null, {
-        default: () => (store.siteTheme === "light" ? "深色模式" : "浅色模式"),
+        default: () => (store.siteTheme === "light" ? "$t('header.dark')" : "$t('header.light')"),
       });
     },
     key: "changeTheme",
@@ -269,7 +285,7 @@ const menuOptions = [
     },
   },
   {
-    label: "全局设置",
+    label: t("header.setting"),
     key: "setting",
     icon: () => {
       return h(NIcon, null, {
@@ -305,7 +321,7 @@ watch(
 
 onMounted(() => {
   window.$timeInterval = timeInterval.value = setInterval(() => {
-    store.timeData = getCurrentTime();
+    store.timeData = getCurrentTime(t);
   }, 1000);
   showRefresh.value = router.currentRoute.value?.path === "/" ? true : false;
 });

@@ -6,14 +6,14 @@
         class="author"
         :depth="3"
         v-html="packageJson.modifier"
-        @click="jumpLink(packageJson.github)"
+        @click="jumpLink(packageJson.github_modifier)"
       />
       <n-text class="credit" v-html="packageJson.credit" />
       <n-text
         class="author"
         :depth="3"
         v-html="packageJson.author"
-        @click="jumpLink(packageJson.github)"
+        @click="jumpLink(packageJson.github_author)"
       />
     </div>
     <n-text

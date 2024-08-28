@@ -19,10 +19,10 @@
       </n-grid-item>
     </n-grid>
     <div class="error" v-else>
-      <n-divider dashed class="tip"> 开始添加你的第一个订阅吧！ </n-divider>
+      <n-divider dashed class="tip"> {{ $t("home.tip") }} </n-divider>
       <n-space justify="center">
         <n-button size="large" secondary strong @click="reset">
-          出错了？点此重置
+          {{ $t("home.reset.prompt") }}
         </n-button>
       </n-space>
     </div>
@@ -32,17 +32,18 @@
 <script setup>
 import { mainStore } from "@/store";
 import HotList from "@/components/HotList.vue";
+import { useI18n } from 'vue-i18n';
 console.log("启动！")
 const store = mainStore();
-
+const { t } = useI18n();
 // 重置
 const reset = () => {
   $dialog.warning({
-    title: "重置站点",
+    title: t("home.reset.resetTitle"),
     content:
-      "确认重置站点？你的自定义数据将会恢复为默认状态！（当设置页面能正常进入并显示时请不要执行此操作！）",
-    positiveText: "重置",
-    negativeText: "取消",
+      t("home.reset.resetContent"),
+    positiveText: t("home.reset.confirm"),
+    negativeText: t("home.reset.cancel"),
     onPositiveClick: () => {
       if ($timeInterval) clearInterval($timeInterval);
       localStorage.clear();

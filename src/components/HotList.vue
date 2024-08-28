@@ -16,12 +16,12 @@
     <n-scrollbar class="news-list" ref="scrollbarRef">
       <Transition name="fade" mode="out-in">
         <div v-if="loadingError" class="error">
-          <n-result size="small" status="500" title="哎呀，加载失败了" description="生活总会遇到不如意的事情" style="margin-top: 40px" />
+          <n-result size="small" status="500" :title="$t('hotList.error.title')" :description="$t('hotList.error.desc')" style="margin-top: 40px" />
           <n-button size="small" secondary strong round @click.stop="getHotListsData(hotData.source)">
             <template #icon>
               <n-icon :component="Refresh" />
             </template>
-            重试
+            {{ $t('hotList.retry') }}
           </n-button>
         </div>
         <div v-else-if="!hotListData || listLoading" class="loading">
@@ -56,7 +56,7 @@
             <n-text class="time" :depth="3" v-if="updateTime">
               {{ updateTime }}
             </n-text>
-            <n-text class="time" :depth="3" v-else> 获取失败 </n-text>
+            <n-text class="time" :depth="3" v-else> {{$t("hotList.timeFail")  }} </n-text>
             <n-space class="controls">
               <n-popover>
                 <template #trigger>
@@ -66,7 +66,7 @@
                     </template>
                   </n-button>
                 </template>
-                取消订阅
+                {{ $t('hotList.unsubscribe') }}
               </n-popover>
               <n-popover v-if="hotListData.data.length > 15">
                 <template #trigger>
@@ -76,7 +76,7 @@
                     </template>
                   </n-button>
                 </template>
-                查看更多
+                {{$t('hotList.more')}}
               </n-popover>
               <n-popover>
                 <template #trigger>
@@ -86,7 +86,7 @@
                     </template>
                   </n-button>
                 </template>
-                获取最新
+                {{$t('hotList.refresh')}}
               </n-popover>
             </n-space>
           </div>
@@ -104,6 +104,8 @@ import { mainStore } from "@/store";
 import { useRouter } from "vue-router";
 import { useDialog, useMessage } from 'naive-ui'
 import axios from "@/api/request";
+import {useI18n} from 'vue-i18n'
+const { t } = useI18n();
 
 const dialog = useDialog()
 const router = useRouter();
@@ -154,7 +156,7 @@ const getHotListsData = async (name) => {
     }
   } catch (error) {
     loadingError.value = true;
-    $message.error("热榜加载失败，请重试");
+    $message.error(t("hotList.error.loading"));
   }
 };
 
@@ -162,7 +164,7 @@ const getHotListsData = async (name) => {
 const getNewData = () => {
   const now = Date.now();
   if (now - lastClickTime.value > 60000) {
-    $message.loading("正在更新，请稍后");
+    $message.loading(t("hotlist.info.loading"));
     // 点击事件
     // listLoading.value = true;
     axios.post("/hotlist/update", null, {
@@ -188,17 +190,17 @@ const getNewData = () => {
     localStorage.setItem(`${props.hotData.id}Btn`, now);
   } else {
     // 不执行点击事件
-    $message.info("请稍后再刷新");
+    $message.info(t("hotList.info.tryLater"));
   }
 };
 
 const handleCancel = () => {
 
   dialog.warning({
-    title: '提示',
-    content: '取消订阅' + props.hotData.title + '?',
-    positiveText: '确定',
-    negativeText: '取消',
+    title: t("hotList.dialog.title"),
+    content: t("hotList.dialog.content") + props.hotData.title + '?',
+    positiveText: t("hotList.dialog.confirm"),
+    negativeText: t("hotList.dialog.cancel"),
     onPositiveClick: () => {
       console.log(props.hotData.id);
       axios
@@ -210,9 +212,9 @@ const handleCancel = () => {
         console.log(res.data);
         if (res.code === 200) {
           store.newsArr = store.newsArr.filter(item => item.id !== props.hotData.id)
-          $message.success('取消订阅成功')
+          $message.success(t("hotList.dialog.success"))
         } else {
-          $message.error('取消订阅失败')
+          $message.error(t("hotList.dialog.fail"))
         }
 
       })
@@ -225,7 +227,7 @@ const handleCancel = () => {
 // 链接跳转
 const navigate = (data) => {
   console.log(data);
-  if (!data.link && !data.homepage) return $message.error("链接不存在");
+  if (!data.link && !data.homepage) return $message.error(t("list.linkError"));
   const url = data.link == null ? data.homepage : data.link;
   if (store.linkOpenType === "open") {
     window.open(url, "_blank");
@@ -271,7 +273,7 @@ watch(
   () => store.timeData,
   () => {
     if (hotListData.value) {
-      updateTime.value = formatTime(hotListData.value.updateTime);
+      updateTime.value = formatTime(hotListData.value.updateTime,t);
     }
   }
 );

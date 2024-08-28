@@ -1,6 +1,5 @@
 import LunarCalendar from "lunar-calendar";
-
-export const formatTime = (timestamp) => {
+export const formatTime = (timestamp,t) => {
   // console.log(timestamp);
   const date = new Date(timestamp+"Z");
   // console.log(date);
@@ -10,23 +9,24 @@ export const formatTime = (timestamp) => {
   const diffInHours = diffInMinutes / 60;
 
   if (diffInSeconds < 60) {
-    return "刚刚更新";
+    return t("time.justUpdated");
   } else if (diffInMinutes < 60) {
     const minutes = Math.floor(diffInMinutes);
-    return `最新记录: ${minutes}分钟前`;
+    return t("time.minutesAgo", { minutes });
   } else if (diffInHours < 24) {
     const hours = Math.floor(diffInHours);
-    return `最新记录: ${hours}小时前`;
+    return t("time.hoursAgo", { hours });
   } else {
     const month = date.getMonth() + 1;
     const day = date.getDate();
-    return `${month}月${day}日`;
+    return t("time.specificDate", { month, day });
   }
 };
 
-export const getCurrentTime = () => {
+export const getCurrentTime = (t) => {
   const time = new Date();
   const year = time.getFullYear();
+
   const month =
     time.getMonth() + 1 < 10
       ? "0" + (time.getMonth() + 1)
@@ -37,15 +37,8 @@ export const getCurrentTime = () => {
     time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes();
   const second =
     time.getSeconds() < 10 ? "0" + time.getSeconds() : time.getSeconds();
-  const weekday = [
-    "星期日",
-    "星期一",
-    "星期二",
-    "星期三",
-    "星期四",
-    "星期五",
-    "星期六",
-  ];
+  const weekday = t("time.weekday").split(',')
+  ;
   // 获取农历
   const lunar = LunarCalendar.solarToLunar(
     time.getFullYear(),

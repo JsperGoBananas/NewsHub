@@ -1,8 +1,8 @@
 {
   "name": "dailyhot",
   "description": "今日热榜",
-  "modifier":"JasperGoBananas",
-  "github_modifier":"https://github.com/JsperGoBananas",
+  "modifier": "JasperGoBananas",
+  "github_modifier": "https://github.com/JsperGoBananas",
   "author": "imsyy",
   "github_author": "https://github.com/imsyy",
   "version": "1.1.0",
@@ -23,6 +23,7 @@
     "scrollreveal": "^4.0.9",
     "terser": "^5.30.3",
     "vue": "^3.4.21",
+    "vue-i18n": "^9.14.0",
     "vue-router": "^4.3.0",
     "vuedraggable": "^4.1.0"
   },

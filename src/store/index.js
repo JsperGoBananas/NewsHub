@@ -222,13 +222,13 @@ export const mainStore = defineStore("mainData", {
   getters: {},
   actions: {
     //切换分页显示和时间线显示
-    setMode(val){
-      $message.info(`已切换至${val === "list" ? "分页显示" : "时间线显示"}`);
+    setMode(val,t){
+      $message.info(t("switch.prompt")+`${val === "list" ? t("switch.list") : t("switch.timeline")}`);
       this.mode = val;
     },
     // 更改系统主题
-    setSiteTheme(val) {
-      $message.info(`已切换至${val === "dark" ? "深色模式" : "浅色模式"}`, {
+    setSiteTheme(val,t) {
+      $message.info(t("switch.prompt")+`${val === "dark" ? t("header.dark") : t("header.light")}`, {
         showIcon: false,
       });
       this.siteTheme = val;
@@ -246,7 +246,6 @@ export const mainStore = defineStore("mainData", {
         // 执行比较并迁移
         if (this.newsArr.length > 0) {
           for (const newItem of defaultNewsArr) {
-            console.log(newItem);
             const exists = this.newsArr.some(
               (news) => newItem.id === news.id
             );
@@ -255,6 +254,17 @@ export const mainStore = defineStore("mainData", {
               console.log("列表有更新：", newItem);
               updatedNum++;
               this.newsArr.push(newItem);
+            }
+          }
+          //如果有newsArr的Item不在defaultNewsArr中，删除newsArr的Item
+          for (let i = 0; i < this.newsArr.length; i++) {
+            const exists = defaultNewsArr.some(
+              (news) => this.newsArr[i].id === news.id
+            );
+            if (!exists) {
+              console.log("列表有删除：", this.newsArr[i]);
+              this.newsArr.splice(i, 1);
+              i--;
             }
           }
           if (updatedNum) $message.success(`成功更新 ${updatedNum} 个榜单数据`);

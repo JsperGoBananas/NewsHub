@@ -100,10 +100,10 @@ import { mainStore } from "@/store";
 import { useRouter } from "vue-router";
 import { formatTime } from "@/utils/getTime";
 import { getHotLists } from "@/api";
-
+import { useI18n } from 'vue-i18n';
 const router = useRouter();
 const store = mainStore();
-
+const { t } = useI18n();
 const updateTime = ref(null);
 const listType = ref(
   router.currentRoute.value.query.type || store.newsArr[0].id
@@ -133,7 +133,7 @@ const getHotListsData = async (name) => {
 
 const navigate= (data) =>{
   console.log(data);
-  if (!data.link && !data.homepage) return $message.error("链接不存在");
+  if (!data.link && !data.homepage) return $message.error(t("list.linkError "));
   const url = data.link == null ? data.homepage : data.link;
   if (store.linkOpenType === "open") {
     window.open(url, "_blank");
@@ -143,7 +143,7 @@ const navigate= (data) =>{
 }
 // 链接跳转
 const jumpLink = (data) => {
-  if (!data.url || !data.mobileUrl) return $message.error("链接不存在");
+  if (!data.url || !data.mobileUrl) return $message.error(t("list.linkError"));
   const url = data
   if (store.linkOpenType === "open") {
     window.open(url, "_blank");
@@ -168,7 +168,7 @@ watch(
   () => store.timeData,
   () => {
     if (listData.value) {
-      updateTime.value = formatTime(listData.value.updateTime);
+      updateTime.value = formatTime(listData.value.updateTime,t);
     }
   }
 );

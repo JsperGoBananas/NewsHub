@@ -1,20 +1,25 @@
 <template>
   <div class="setting">
-    <div class="title">全局设置</div>
-    <n-h6 prefix="bar"> 基础设置 </n-h6>
+    <div class="title">{{ $t("settings.title") }}</div>
+    <n-h6 prefix="bar">{{ $t("settings.basicSettings") }}</n-h6>
     <n-card class="set-item">
       <div class="top">
         <div class="name">
-          <n-text class="text">明暗模式</n-text>
+          <n-text class="text">{{ $t("settings.theme.lightDarkMode") }}</n-text>
         </div>
-        <n-select class="set" v-model:value="siteTheme" :options="themeOptions" @update:value="siteThemeAuto = false" />
+        <n-select
+          class="set"
+          v-model:value="siteTheme"
+          :options="themeOptions"
+          @update:value="siteThemeAuto = false"
+        />
       </div>
     </n-card>
     <n-card class="set-item">
       <div class="top">
         <div class="name">
-          <n-text class="text">明暗模式跟随系统</n-text>
-          <n-text class="tip" :depth="3"> 明暗模式是否跟随系统当前模式 </n-text>
+          <n-text class="text">{{ $t("settings.theme.autoFollowSystem") }}</n-text>
+          <n-text class="tip" :depth="3">{{ $t("settings.theme.tipAutoFollowSystem") }}</n-text>
         </div>
         <n-switch v-model:value="siteThemeAuto" :round="false" @update:value="themeAutoOpen" />
       </div>
@@ -22,91 +27,111 @@
     <n-card class="set-item">
       <div class="top">
         <div class="name">
-          <n-text class="text">链接跳转方式</n-text>
-          <n-text class="tip" :depth="3"> 选择榜单列表内容的跳转方式 </n-text>
+          <n-text class="text">{{ $t("settings.linkOpenType.title") }}</n-text>
+          <n-text class="tip" :depth="3">{{ $t("settings.linkOpenType.tip") }}</n-text>
         </div>
-        <n-select class="set" v-model:value="linkOpenType" :options="linkOptions" />
+        <n-select
+          class="set"
+          v-model:value="linkOpenType"
+          :options="linkOptions"
+        />
       </div>
     </n-card>
-    <!-- <n-card class="set-item">
-      <div class="top">
-        <div class="name">
-          <n-text class="text">固定导航栏</n-text>
-          <n-text class="tip" :depth="3"> 导航栏是否固定 </n-text>
-        </div>
-        <n-switch v-model:value="headerFixed" :round="false" />
-      </div>
-    </n-card> -->
     <n-card class="set-item">
       <div class="top" style="flex-direction: column; align-items: flex-start">
         <div class="name">
-          <n-text class="text">列表文本大小</n-text>
-          <n-card class="tip" :style="{
-            backgroundColor: 'var(--n-border-color)',
-            margin: '12px 0',
-          }">
+          <n-text class="text">{{ $t("settings.listTextSize.title") }}</n-text>
+          <n-card
+            class="tip"
+            :style="{
+              backgroundColor: 'var(--n-border-color)',
+              margin: '12px 0',
+            }"
+          >
             <n-text :style="{ fontSize: listFontSize + 'px' }">
-              我是将要显示的文字的大小
+              {{ $t("settings.listTextSize.tip") }}
             </n-text>
           </n-card>
         </div>
 
-        <n-slider v-model:value="listFontSize" :tooltip="false" :max="20" :min="14" :step="0.01" :marks="{
-          14: '小一点',
-          16: '默认',
-          20: '最大',
-        }" />
+        <n-slider
+          v-model:value="listFontSize"
+          :tooltip="false"
+          :max="20"
+          :min="14"
+          :step="0.01"
+          :marks="{
+            14: $t('settings.listTextSize.smaller'),
+            16: $t('settings.listTextSize.default'),
+            20: $t('settings.listTextSize.larger'),
+          }"
+        />
       </div>
     </n-card>
     <n-card class="set-item">
       <div class="top">
         <div class="name">
-          <n-text class="text">榜单设置</n-text>
-          
+          <n-text class="text">{{ $t("settings.sort.title") }}</n-text>
         </div>
         <n-card class="sort-control">
-            <n-switch v-model:value="isDraggable" :round="false"
-              @update:value= "tips" />
-            <n-text class="tip" :depth="3">
-              开启榜单排序
-            </n-text>
-          </n-card>
-        <!-- <n-popconfirm @positive-click="restoreDefault">
-          <template #trigger>
-            <n-button class="control" size="small"> 恢复默认 </n-button>
-          </template>
-确认将排序恢复到默认状态？
-</n-popconfirm> -->
+          <n-switch
+            v-model:value="isDraggable"
+            :round="false"
+            @update:value="tips"
+          />
+          <n-text class="tip" :depth="3">
+            {{ $t("settings.sort.tip") }}
+          </n-text>
+        </n-card>
       </div>
-      <draggable :list="newsArr" :animation="200" class="mews-group" item-key="order" @start="handleDragStart"
-        @end="saveSoreData()" :disabled="!isDraggable">
+      <draggable
+        :list="newsArr"
+        :animation="200"
+        class="mews-group"
+        item-key="order"
+        @start="handleDragStart"
+        @end="saveSoreData()"
+        :disabled="!isDraggable"
+      >
         <template #item="{ element }">
-          <n-card class="item" embedded :content-style="{ display: 'flex', alignItems: 'center' }">
+          <n-card
+            class="item"
+            embedded
+            :content-style="{ display: 'flex', alignItems: 'center' }"
+          >
             <div class="desc" :style="{ opacity: element.isShow ? null : 0.6 }">
-              <!-- <img class="logo" :src="`/logo/${element.id}.ico`" alt="logo" /> -->
-              <n-avatar class="logo" :src="`${element.iconUrl}`" :fallback-src="`/logo/${element.id}.ico`" />
+              <n-avatar
+                class="logo"
+                :src="`${element.iconUrl}`"
+                :fallback-src="`/logo/${element.id}.ico`"
+              />
               <n-text class="news-name" v-html="element.title" />
             </div>
-            <n-switch class="switch" :round="false" size="large" v-model:value="element.isShow"
-              @update:value="saveSoreData(element.title, element.isShow)" />
+            <n-switch
+              class="switch"
+              :round="false"
+              size="large"
+              v-model:value="element.isShow"
+              @update:value="saveSoreData(element.title, element.isShow)"
+            />
           </n-card>
         </template>
       </draggable>
     </n-card>
-    <n-h6 prefix="bar"> 杂项设置 </n-h6>
+    <n-h6 prefix="bar">{{ $t("settings.miscellaneous") }}</n-h6>
     <n-card class="set-item">
       <div class="top">
         <div class="name">
-          <n-text class="text">重置所有数据</n-text>
+          <n-text class="text">{{ $t("settings.reset.title") }}</n-text>
           <n-text class="tip" :depth="3">
-            重置所有数据，你的自定义设置都将会丢失
+            {{ $t("settings.reset.tip") }}
           </n-text>
         </div>
         <n-popconfirm @positive-click="reset">
           <template #trigger>
-            <n-button type="warning"> 重置 </n-button>
+            <n-button type="warning"> {{ $t("settings.reset.buttonText") }} </n-button>
           </template>
-          确认重置所有数据？你的自定义设置都将会丢失！
+          {{ $t("settings.reset.confirm") }}
         </n-popconfirm>
       </div>
     </n-card>
@@ -118,7 +143,8 @@ import { storeToRefs } from "pinia";
 import { mainStore } from "@/store";
 import { useOsTheme } from "naive-ui";
 import draggable from "vuedraggable";
-
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const store = mainStore();
 const osThemeRef = useOsTheme();
 const isDraggable = ref(false);
@@ -135,11 +161,11 @@ console.log(newsArr)
 // 深浅模式
 const themeOptions = ref([
   {
-    label: "浅色模式",
+    label: t("header.light"),
     value: "light",
   },
   {
-    label: "深色模式",
+    label: t("header.dark"),
     value: "dark",
   },
 ]);
@@ -147,43 +173,48 @@ const themeOptions = ref([
 // 榜单跳转
 const linkOptions = [
   {
-    label: "新页面打开",
+    label: t("settings.linkOpenType.new"),
     value: "open",
   },
   {
-    label: "当前页打开",
+    label: t("settings.linkOpenType.current"),
     value: "href",
   },
 ];
 
 const tips = () => {
   if (isDraggable.value) {
-    $message.success("榜单排序已开启");
+    $message.success(t("settings.messages.sortEnabled"));
   } else {
-    $message.error("榜单排序已关闭");
+    $message.error(t("settings.messages.sortDisabled"));
   }
 };
+
 // 开启明暗自动跟随
 const themeAutoOpen = (val) => {
   console.log(osThemeRef.value);
   if (val) {
     siteTheme.value = osThemeRef.value;
+    $message.success(t("settings.messages.themeAutoFollow"));
   }
 };
 
 // 恢复默认排序
 const restoreDefault = () => {
   newsArr.value = newsArr.value.sort((a, b) => a.order - b.order);
-  $message.success("恢复默认榜单排序成功");
+  $message.success(t("settings.messages.restoreDefaultSort"));
 };
 
 // 将排序结果写入
 const saveSoreData = (name = null, open = false) => {
+  const status = open ? t("settings.messages.success") : t("settings.messages.fail");
+  console.log(status)
   $message.success(
-    name ? `${name}榜单已${open ? "开启" : "关闭"}` : "榜单排序成功"
+    name ? t("settings.messages.sortToggle", { name, status }) : t("settings.messages.sortSuccess")
   );
   localStorage.setItem("mainData", JSON.stringify(newsArr.value));
 };
+
 
 // 重置数据
 const reset = () => {
