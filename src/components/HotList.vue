@@ -164,7 +164,7 @@ const getHotListsData = async (name) => {
 const getNewData = () => {
   const now = Date.now();
   if (now - lastClickTime.value > 60000) {
-    $message.loading(t("hotlist.info.loading"));
+    $message.loading(t("hotList.info.loading"));
     // 点击事件
     // listLoading.value = true;
     axios.post("/hotlist/update", null, {
