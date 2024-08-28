@@ -160,7 +160,9 @@ const showModal = ref(false); // State to show/hide the dialog
 const urlInput = ref(""); // State to hold the input value
 const { locale } = useI18n();
 const toggleLanguage = () =>{
-  locale.value = locale.value === 'en' ? 'zh' : 'en';
+  console.log(store.locale);
+  store.locale = store.locale === 'en' ? 'zh' : 'en';
+  locale.value = store.locale;
 }
 const addLink = () => {
   console.log(urlInput.value);
@@ -244,7 +246,16 @@ const menuOptions = [
     type: "divider",
   },
   {
-    label: t("header.addUrl"),
+    label: () => t("header.switchLanguage"),
+    key: "toggleLanguage",
+    icon: () => {
+      return h(NIcon, null, {
+        default: () => h(Translate),
+      });
+    },
+  },
+  {
+    label: () => t("header.addUrl"),
     key: "add",
     icon: () => {
       return h(NIcon, null, {
@@ -253,7 +264,7 @@ const menuOptions = [
     },
   },
   {
-    label: t("header.switchMode"),
+    label: () => t("header.switchMode"),
     key: "switch",
     icon: () => {
       return h(NIcon, null, {
@@ -262,7 +273,7 @@ const menuOptions = [
     },
   },
   {
-    label: t("header.refresh"),
+    label: () => t("header.refresh"),
     key: "refresh",
     icon: () => {
       return h(NIcon, null, {
@@ -270,11 +281,10 @@ const menuOptions = [
       });
     },
   },
-
   {
     label: () => {
       return h(NText, null, {
-        default: () => (store.siteTheme === "light" ? "$t('header.dark')" : "$t('header.light')"),
+        default: () => (store.siteTheme === "light" ? t('header.dark') : t('header.light')),
       });
     },
     key: "changeTheme",
@@ -285,7 +295,7 @@ const menuOptions = [
     },
   },
   {
-    label: t("header.setting"),
+    label: () => t("header.setting"),
     key: "setting",
     icon: () => {
       return h(NIcon, null, {
@@ -300,13 +310,15 @@ const menuOptionsSelect = (val) => {
   if (val === "refresh") {
     router.go(0);
   } else if (val === "changeTheme") {
-    store.setSiteTheme(store.siteTheme === "light" ? "dark" : "light");
+    store.setSiteTheme(store.siteTheme === "light" ? "dark" : "light",t);
   } else if (val === "setting") {
     router.push("/setting");
   } else if (val === "switch") {
     switchMode()
   } else if (val === "add") {
     showModal.value = true
+  }else if(val === "toggleLanguage"){
+    toggleLanguage()
   }
 };
 

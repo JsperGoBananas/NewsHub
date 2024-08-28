@@ -217,10 +217,14 @@ export const mainStore = defineStore("mainData", {
       // 字体大小
       listFontSize: 16,
       mode: "list",
+      locale:"zh",
     };
   },
   getters: {},
   actions: {
+    toggleLanguage(lang){
+      this.locale = lang;
+    },
     //切换分页显示和时间线显示
     setMode(val,t){
       $message.info(t("switch.prompt")+`${val === "list" ? t("switch.list") : t("switch.timeline")}`);
@@ -237,7 +241,6 @@ export const mainStore = defineStore("mainData", {
     // 检查更新
     checkNewsUpdate() {
       axios.get('/website/list').then(res => {
-        console.log("asdf"+res.data);
         const defaultNewsArr = res.data;
         const mainData = JSON.parse(localStorage.getItem("mainData"));
         let updatedNum = 0;
@@ -287,6 +290,7 @@ export const mainStore = defineStore("mainData", {
         "linkOpenType",
         "headerFixed",
         "listFontSize",
+        "locale",
       ],
     },
   ],

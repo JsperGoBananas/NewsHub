@@ -12,7 +12,7 @@ export default{
         },
         addUrl:"添加订阅源",
         switchLanguage:"Switch to English",
-        switchMode:"切换样式",
+        switchMode:"切换模式",
         refresh:"刷新",
         setting:"设置",
         add:"添加",
@@ -116,5 +116,10 @@ export default{
         currentTime: "{year}年{month}月{day}日 {hour}:{minute}:{second} {weekday}",
         weekday: '星期日,星期一,星期二, 星期三, 星期四,星期五,星期六',
       },
+      switch:{
+        prompt:"已切换至 ",
+        list:"列表模式",
+        timeline:"时间线模式",
+    }
 
 }

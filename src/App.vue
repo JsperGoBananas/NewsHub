@@ -28,6 +28,8 @@ import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 import axios from "@/api/request"
 const store = mainStore();
+import {useI18n} from 'vue-i18n'
+const { locale } = useI18n();
 
 // 顶栏显隐
 const headerShow = ref(false);
@@ -38,6 +40,7 @@ const backTopChange = (val) => {
 };
 
 onMounted(() => {
+  locale.value = store.locale ? store.locale : 'zh';
   store.checkNewsUpdate();
   // 写入默认
   nextTick(() => {

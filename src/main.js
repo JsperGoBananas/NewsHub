@@ -20,7 +20,7 @@ const i18n = createI18n({
     // something vue-i18n options here ...
     legacy: false,  // 设置为 false，启用 composition API 模式
     messages,
-    locale: 'en'  // 设置默认语言
+    locale: 'zh'  // 设置默认语言
   
   })
 const pinia = createPinia();
